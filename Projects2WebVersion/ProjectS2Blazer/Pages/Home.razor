@@ -1,0 +1,37 @@
+﻿@page "/"
+@inject PasswordAnalyzer Analyzer
+@inject PasswordDictionaryService DictService
+@inject HttpClient Http
+@using BruteForceAttack
+@using ProjectS2Blazer.Services
+
+<h3>Password Analyzer Test</h3>
+
+<input @bind="input" placeholder="Enter password" />
+
+<button @onclick="Run">Analyze</button>
+
+@if (result != null)
+{
+    <hr />
+    <p><b>Entropy:</b> @result.Entropy.ToString("F3") bits</p>
+    <p><b>Brute force:</b>@(result.BruteForceTime == -1 ? "Unable to break" : BruteForce.FormatTime(result.BruteForceTime))</p>
+    <p><b>Dictionary:</b>@(result.DictionaryTime == -1 ? "Unable to break" : result.DictionaryTime.ToString("F3") + " sec")</p>
+    <p><b>Hybrid:</b>@(result.HybridTime == -1 ? "Unable to break" : result.HybridTime.ToString("F3") + " sec")</p>
+    <p><b>Rule-based:</b>@(result.RuleBasedTime == -1 ? "Unable to break" : result.RuleBasedTime.ToString("F3") + " sec")</p>
+}
+
+@code {
+    string input = "";
+    ProjectS2Blazer.Services.AnalysisResult result;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await DictService.LoadAsync(Http);
+    }
+
+    void Run()
+    {
+        result = Analyzer.Analyze(input);
+    }
+}
