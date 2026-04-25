@@ -4,92 +4,102 @@ namespace StrengthAnalysis
 {
     public class PasswordStrengthEvaluator
     {
-        public static void Evaluate(
-            double entropy,
-            double bruteForceTime,
-            double dictionaryTime,
-            double hybridTime,
-            double ruleBasedTime)
+        public static void Evaluate(double entropy, double bruteForceTime, double dictionaryTime, double hybridTime, double ruleBasedTime)
         {
-            int score = 0;
+            double score = 0;
 
             score += EntropyScore(entropy);
-            score += AttackScore(bruteForceTime);
-            score += AttackScore(dictionaryTime) * 3;
-            score += AttackScore(hybridTime) * 2;
-            score += AttackScore(ruleBasedTime) * 3;
 
-            int penalty = WeaknessPenalty(dictionaryTime, ruleBasedTime, hybridTime);
+            score += AttackScore(bruteForceTime, 1.0);
+            score += AttackScore(dictionaryTime, 3.0);
+            score += AttackScore(hybridTime, 2.0);
+            score += AttackScore(ruleBasedTime, 3.0);
 
-            score -= penalty;
+            score -= Penalty(dictionaryTime, ruleBasedTime, hybridTime);
 
-            if (score < 0) score = 0;
-            if (score > 150) score = 150;
+            score = Clamp(score, 0, 200);
 
             string label = GetLabel(score);
 
-            PrintResult(score, label);
+            Print(score, label);
         }
 
-        static int EntropyScore(double entropy)
+        static double EntropyScore(double entropy)
         {
-            if (entropy < 30) return 5;
-            if (entropy < 50) return 15;
-            if (entropy < 70) return 25;
-            return 30;
+            if (entropy < 20) return 5;
+            if (entropy < 30) return 10;
+            if (entropy < 40) return 20;
+            if (entropy < 50) return 35;
+            if (entropy < 60) return 50;
+            if (entropy < 80) return 65;
+            return 80;
         }
 
-        static int AttackScore(double time)
+        static double AttackScore(double time, double weight)
         {
-            if (time < 0) return 30;
-            if (time < 1) return 5;
-            if (time < 3600) return 10;
-            if (time < 86400) return 20;
-            return 30;
+            if (time < 0) return 0;
+            if (time < 0.1) return 80 * weight;
+            if (time < 1) return 60 * weight;
+            if (time < 60) return 40 * weight;
+            if (time < 3600) return 20 * weight;
+            if (time < 86400) return 10 * weight;
+            return 5 * weight;
         }
 
-        static int WeaknessPenalty(double dictionaryTime, double ruleBasedTime, double hybridTime)
+        static double Penalty(double dict, double rule, double hybrid)
         {
-            int penalty = 0;
+            double p = 0;
 
-            if (dictionaryTime > 0 && dictionaryTime < 1)
-                penalty += 60;
+            if (dict >= 0 && dict < 0.5) p += 80;
+            else if (dict < 1) p += 60;
 
-            if (ruleBasedTime > 0 && ruleBasedTime < 1)
-                penalty += 40;
+            if (rule >= 0 && rule < 0.5) p += 50;
+            else if (rule < 1) p += 30;
 
-            if (hybridTime > 0 && hybridTime < 1)
-                penalty += 30;
+            if (hybrid >= 0 && hybrid < 0.5) p += 30;
+            else if (hybrid < 1) p += 15;
 
-            return penalty;
+            return p;
         }
 
-        static string GetLabel(int score)
+        static double Clamp(double v, double min, double max)
         {
-            if (score < 40) return "WEAK";
-            if (score < 70) return "MEDIUM";
-            if (score < 90) return "STRONG";
+            if (v < min) return min;
+            if (v > max) return max;
+            return v;
+        }
+
+        static string GetLabel(double score)
+        {
+            if (score < 40) return "VERY WEAK";
+            if (score < 80) return "WEAK";
+            if (score < 120) return "MEDIUM";
+            if (score < 160) return "STRONG";
             return "VERY STRONG";
         }
 
-        static void PrintResult(int score, string label)
+        static void Print(double score, string label)
         {
 
             Console.WriteLine(" PASSWORD STRENGTH ANALYSIS ");
 
-            Console.WriteLine($"Score: {score}/150");
+            Console.WriteLine($"Score: {score:F1} / 200");
             Console.WriteLine($"Strength: {label}");
 
-            if (label == "WEAK")
+            Console.WriteLine("\nResult:");
+
+            if (label == "VERY WEAK")
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+            else if (label == "WEAK")
                 Console.ForegroundColor = ConsoleColor.Red;
             else if (label == "MEDIUM")
                 Console.ForegroundColor = ConsoleColor.Yellow;
+            else if (label == "STRONG")
+                Console.ForegroundColor = ConsoleColor.Blue;
             else
                 Console.ForegroundColor = ConsoleColor.Green;
 
-            Console.WriteLine("\nConclusion:");
             Console.WriteLine(GetMessage(label));
-
             Console.ResetColor();
         }
 
@@ -97,10 +107,11 @@ namespace StrengthAnalysis
         {
             return label switch
             {
-                "WEAK" => "Password is easily breakable.",
-                "MEDIUM" => "there is a risk of unsafety.",
-                "STRONG" => "Good password.",
-                "VERY STRONG" => "The best password.",
+                "VERY WEAK" => "Иreakable.",
+                "WEAK" => "Weak password.",
+                "MEDIUM" => "Moderate strength.",
+                "STRONG" => "Good security level.",
+                "VERY STRONG" => "The best password",
                 _ => ""
             };
         }
