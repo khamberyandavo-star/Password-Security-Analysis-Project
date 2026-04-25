@@ -45,9 +45,7 @@ namespace StrengthAnalysis
 
         static void Print(int score, string label, double dict, double hybrid, double rule)
         {
-            Console.WriteLine("\n==================================");
             Console.WriteLine(" PASSWORD STRENGTH ANALYSIS ");
-            Console.WriteLine("==================================");
 
             Console.WriteLine($"Score: {score}/100");
             Console.WriteLine($"Strength: {label}");
