@@ -1,86 +1,35 @@
-﻿using System;
+using System;
+using DicAttack;
+using HybAttack;
+using EntropyNamespace;
+using BruteForceAttack;
+using RuleBasedAttack;
+using StrengthAnalysis;
 
-namespace StrengthAnalysis
+namespace ProjectS2
 {
-    class PasswordStrengthEvaluator
+    class Program
     {
-        public static void Evaluate(
-            double entropy,
-            double bruteForceTime,
-            double dictionaryTime,
-            double hybridTime,
-            double ruleBasedTime)
+        static void Main(string[] args)
         {
-            int score = 0;
+            Console.Write("Enter password: ");
+            string password = Console.ReadLine();
 
-            score += EntropyScore(entropy);
-            score += AttackScore(bruteForceTime);
-            score += AttackScore(dictionaryTime);
-            score += AttackScore(hybridTime);
-            score += AttackScore(ruleBasedTime);
+            double entropy = Entropy.CalculateEntropy(password);
+            double bruteForceTime = BruteForce.BruteForceAttackTime(password);
+            double dictionaryTime = DictionaryAttack.DictAttack(password);
+            double hybridTime = HybridAttack.HybrAttack(password);
+            double ruleBasedTime = RuleBased.RuleBasedAttackTime(password);
 
-            string label = GetLabel(score);
+            Console.WriteLine(" PASSWORD SECURITY ANALYSIS SYSTEM ");
 
-            PrintResult(score, label);
-        }
+            Console.WriteLine($"Entropy: {entropy:F2} bits");
+            Console.WriteLine($"Brute Force: {BruteForce.FormatTime(bruteForceTime)}");
+            Console.WriteLine($"Dictionary: {(dictionaryTime > 0 ? "NOT SAFE" : "SAFE")}");
+            Console.WriteLine($"Hybrid: {(hybridTime > 0 ? "NOT SAFE" : "SAFE")}");
+            Console.WriteLine($"Rule-Based: {(ruleBasedTime > 0 ? "NOT SAFE" : "SAFE")}\n");
 
-        static int EntropyScore(double entropy)
-        {
-            if (entropy < 30) return 5;
-            if (entropy < 50) return 15;
-            if (entropy < 70) return 25;
-            return 30;
-        }
-
-        static int AttackScore(double time)
-        {
-            if (time < 0) return 30;
-            if (time < 1) return 5;
-            if (time < 3600) return 10;
-            if (time < 86400) return 20;
-            return 30;
-        }
-
-        static string GetLabel(int score)
-        {
-            if (score < 40) return "WEAK";
-            if (score < 70) return "MEDIUM";
-            if (score < 90) return "STRONG";
-            return "VERY STRONG";
-        }
-
-        static void PrintResult(int score, string label)
-        {
-           
-            Console.WriteLine(" PASSWORD STRENGTH ANALYSIS ");
-            
-
-            Console.WriteLine($"Score: {score}/150");
-            Console.WriteLine($"Strength: {label}");
-
-            if (label == "WEAK")
-                Console.ForegroundColor = ConsoleColor.Red;
-            else if (label == "MEDIUM")
-                Console.ForegroundColor = ConsoleColor.Yellow;
-            else
-                Console.ForegroundColor = ConsoleColor.Green;
-
-            Console.WriteLine("\nConclusion:");
-            Console.WriteLine(GetMessage(label));
-
-            Console.ResetColor();
-        }
-
-        static string GetMessage(string label)
-        {
-            return label switch
-            {
-                "WEAK" => "Your password is not secure.",
-                "MEDIUM" => "Still vulnerable",
-                "STRONG" => "Resistant to most attacks.",
-                "VERY STRONG" => "Hard to break.",
-                _ => ""
-            };
+            PasswordStrengthEvaluator.Evaluate(entropy, bruteForceTime, dictionaryTime, hybridTime, ruleBasedTime);
         }
     }
 }
