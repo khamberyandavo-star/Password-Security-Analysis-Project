@@ -5,33 +5,90 @@
 @using BruteForceAttack
 @using ProjectS2Blazer.Services
 
-<h3>Password Analyzer Test</h3>
+<h3>Password Analyzer</h3>
 
 <input @bind="input" placeholder="Enter password" />
 
-<button @onclick="Run">Analyze</button>
+<button @onclick="Run" disabled="@(!isReady)">
+    Analyze
+</button>
+
+<button @onclick="RunGen" disabled="@(!isReady)">
+    Generate a strong password
+</button>
+
+@if (!isReady)
+{
+    <p>Loading dictionary...</p>
+}
 
 @if (result != null)
 {
     <hr />
     <p><b>Entropy:</b> @result.Entropy.ToString("F3") bits</p>
-    <p><b>Brute force:</b>@(result.BruteForceTime == -1 ? "Unable to break" : BruteForce.FormatTime(result.BruteForceTime))</p>
-    <p><b>Dictionary:</b>@(result.DictionaryTime == -1 ? "Unable to break" : result.DictionaryTime.ToString("F3") + " sec")</p>
-    <p><b>Hybrid:</b>@(result.HybridTime == -1 ? "Unable to break" : result.HybridTime.ToString("F3") + " sec")</p>
-    <p><b>Rule-based:</b>@(result.RuleBasedTime == -1 ? "Unable to break" : result.RuleBasedTime.ToString("F3") + " sec")</p>
+
+    <p>
+        <b>Brute force:</b>
+        @(result.BruteForceTime == -1
+            ? "Unable to break"
+            : BruteForce.FormatTime(result.BruteForceTime))
+    </p>
+
+    <p>
+        <b>Dictionary:</b>
+        @(result.DictionaryTime == -1
+            ? "Unable to break"
+            : result.DictionaryTime.ToString("F3") + " sec")
+    </p>
+
+    <p>
+        <b>Hybrid:</b>
+        @(result.HybridTime == -1
+            ? "Unable to break"
+            : result.HybridTime.ToString("F3") + " sec")
+    </p>
+
+    <p>
+        <b>Rule-based:</b>
+        @(result.RuleBasedTime == -1
+            ? "Unable to break"
+            : result.RuleBasedTime.ToString("F3") + " sec")
+    </p>
+    <p>
+        <b>@result.Evaluation</b>
+    </p>
+}
+@if (resultGen != null){
+
+    <hr />
+    <p><b>Generated strong password:</b> @resultGen </p>
+
 }
 
 @code {
     string input = "";
-    ProjectS2Blazer.Services.AnalysisResult result;
+    AnalysisResult result;
+    string resultGen;
+
+    bool isReady = false;
 
     protected override async Task OnInitializedAsync()
     {
         await DictService.LoadAsync(Http);
+        isReady = true;
     }
 
     void Run()
     {
+        if (!isReady) return;
+
         result = Analyzer.Analyze(input);
     }
+    void RunGen()
+    {
+        if (!isReady) return;
+
+        resultGen = Analyzer.GenPassword();
+    }
+    
 }
