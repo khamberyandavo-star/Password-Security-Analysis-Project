@@ -1,4 +1,5 @@
 using System;
+using BruteForceAttack;
 
 namespace StrengthAnalysis
 {
@@ -22,7 +23,7 @@ namespace StrengthAnalysis
 
             string label = GetLabel(score);
 
-            Print(score, label, dictionaryTime, hybridTime, ruleBasedTime);
+            Print(score, label, dictionaryTime, hybridTime, ruleBasedTime, entropy, bruteForceTime);
         }
 
         static int AttackPenalty(double time, int weight)
@@ -43,15 +44,18 @@ namespace StrengthAnalysis
             return "VERY STRONG";
         }
 
-        static void Print(int score, string label, double dict, double hybrid, double rule)
+        static void Print(int score, string label, double dict, double hybrid, double rule, double entropy, double brute)
         {
             Console.WriteLine(" PASSWORD STRENGTH ANALYSIS ");
+
+            Console.WriteLine($"\nEntropy: {entropy.ToString("F2")} bits");
 
             Console.WriteLine($"Score: {score}/100");
             Console.WriteLine($"Strength: {label}");
 
             Console.WriteLine("\nAttack Results:");
 
+            Console.WriteLine($"Brute Force: {(brute >= 0 ? BruteForce.FormatTime(brute): "FAILED")}");
             Console.WriteLine($"Dictionary: {(dict >= 0 ? dict.ToString("F2") + " sec" : "FAILED")}");
             Console.WriteLine($"Hybrid: {(hybrid >= 0 ? hybrid.ToString("F2") + " sec" : "FAILED")}");
             Console.WriteLine($"Rule-Based: {(rule >= 0 ? rule.ToString("F2") + " sec" : "FAILED")}");

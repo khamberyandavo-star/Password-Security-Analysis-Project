@@ -26,6 +26,7 @@ public class PasswordAnalyzer
         var dictTime = new DictionaryAttack().DictAttack(password, dictionary);
         var hybrid = new HybridAttack().HybrAttack(password, dictionary);
         var rule = new RuleBased().RuleBasedAttackTime(password, dictionary);
+        var ruleProb = RuleBased.AnalyzePasswordProblems(password);
 
         return new AnalysisResult
         {
@@ -34,6 +35,7 @@ public class PasswordAnalyzer
             DictionaryTime = dictTime,
             HybridTime = hybrid,
             RuleBasedTime = rule,
+            RuleBasedProb = ruleProb,
             Evaluation = PasswordStrengthEvaluator.Evaluate(entropy, brute, dictTime, hybrid, rule) 
         };
     }
@@ -56,4 +58,5 @@ public class AnalysisResult
     public double HybridTime { get; set; }
     public double RuleBasedTime { get; set; }
     public string Evaluation {get; set; }
+    public List<string> RuleBasedProb{get; set; }
 }

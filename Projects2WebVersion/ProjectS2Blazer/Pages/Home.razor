@@ -7,7 +7,11 @@
 
 <h3>Password Analyzer</h3>
 
-<input @bind="input" placeholder="Enter password" />
+<input @bind="input" type="@inputType" placeholder="Enter password" />
+
+<button @onclick="TogglePassword">
+    @(inputType == "password" ? "Show" : "Hide")
+</button>
 
 <button @onclick="Run" disabled="@(!isReady)">
     Analyze
@@ -55,6 +59,13 @@
             : result.RuleBasedTime.ToString("F3") + " sec")
     </p>
     <p>
+        <b>Issues:</b>
+        @if (result.RuleBasedProb != null && result.RuleBasedProb.Any())
+        {
+            <span>@string.Join(", ", result.RuleBasedProb)</span>
+        }
+    </p>
+    <p>
         <b>@result.Evaluation</b>
     </p>
 }
@@ -69,8 +80,9 @@
     string input = "";
     AnalysisResult result;
     string resultGen;
+    bool isReady = false;    
+    private string inputType = "password";
 
-    bool isReady = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -89,6 +101,10 @@
         if (!isReady) return;
 
         resultGen = Analyzer.GenPassword();
+    }
+    private void TogglePassword()
+    {
+        inputType = inputType == "password" ? "text" : "password";
     }
     
 }

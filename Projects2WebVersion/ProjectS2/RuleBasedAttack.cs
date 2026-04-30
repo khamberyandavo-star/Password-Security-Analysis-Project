@@ -30,6 +30,55 @@ namespace RuleBasedAttack
             return -1;
             //Changed it to -1, so it's obvious that it didn't manage to break the password
         }
+
+        public static List<string> AnalyzePasswordProblems(string password)
+        {
+            List<string> problems = new List<string>();
+
+            if (string.IsNullOrEmpty(password))
+            {
+                problems.Add("Password is empty.");
+                return problems;
+            }
+
+            if (password.Length < 8)
+                problems.Add("Too short (minimum 8 characters recommended)");
+
+            if (!password.Any(char.IsUpper))
+                problems.Add("No uppercase letters");
+
+            if (!password.Any(char.IsLower))
+                problems.Add("No lowercase letters");
+
+            if (!password.Any(char.IsDigit))
+                problems.Add("No digits");
+
+            if (!password.Any(ch => !char.IsLetterOrDigit(ch)))
+                problems.Add("No special characters");
+
+            string lower = password.ToLower();
+
+            if (lower.Contains("123") || lower.Contains("1234") || lower.Contains("0000") || lower.Contains("1111"))
+                problems.Add("Contains common pattern: numbers sequence (example: 123, 1234, 0000)");
+
+            if (lower.Contains("qwerty") || lower.Contains("password") || lower.Contains("admin") || lower.Contains("user"))
+                problems.Add("Contains common word pattern (example: password, admin, qwerty)");
+
+            if (HasRepeatedCharacters(password))
+                problems.Add("Contains repeated characters (example: aaaa, 1111)");
+
+            return problems;
+        }
+
+        private static bool HasRepeatedCharacters(string password)
+        {
+            for (int i = 0; i < password.Length - 2; i++)
+            {
+                if (password[i] == password[i + 1] && password[i] == password[i + 2])
+                    return true;
+            }
+            return false;
+        }
         
         private static List<string> GenerateRuleVariants(string word)
         {
