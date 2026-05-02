@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "ProjectS2Blazer",
   "resources": {
-    "hash": "sha256-lWPtVxr7fOoVnQOjBjL+90aLuZk/BDgqma0Y+qIo49Y=",
+    "hash": "sha256-cAt5KsxGGhlctyd8h+Nj5AqIy6/mRZfI+9rYqjEQmNY=",
     "jsModuleNative": {
       "dotnet.native.8.0.26.nkn2iba8k0.js": "sha256-nElGk+CZFyq0PbPm4JU8avD6lER7x9Z1C54BK7qY12Q="
     },
@@ -31,8 +31,8 @@
       "Microsoft.Extensions.Primitives.wasm": "sha256-6187ynEahDlSLMBvD4vAmiLpZ3clRb5xu6rM7O8AxNo=",
       "Microsoft.JSInterop.wasm": "sha256-2FU4/ycBlXBcuf7XP/gUpRARUIjxICi3ZchkBYrQD4g=",
       "Microsoft.JSInterop.WebAssembly.wasm": "sha256-bz7DzPOpUm7yxitywpFXSwoV99YbQ2eAvdMvLK05+VY=",
-      "ProjectS2.wasm": "sha256-JXqRGfeKPZ2Anwsq9kjsZ8lPITvAziX2ChZYo0A5s+w=",
-      "ProjectS2Blazer.wasm": "sha256-x0j01VPsNRKwFee1bvckIRy0dS37pB6vy93D1RlEJk4=",
+      "ProjectS2.wasm": "sha256-C15QJRwghJbWnl0FIuMRVeCe1KlBXmyalT+CvrjPx1c=",
+      "ProjectS2Blazer.wasm": "sha256-j5VhM3FvTNtlHfc1FyTXRJXmF8LWlF1Jt2BNjMcAJIo=",
       "System.Collections.Concurrent.wasm": "sha256-81l6/6acRFS4cv0ocWzKbGABq2pAAop3dDwd1TGpdms=",
       "System.Collections.wasm": "sha256-GWjNgcBonZnPgZ28687vSv1gamkXaA5MkgUHvLNp4VI=",
       "System.ComponentModel.wasm": "sha256-w++bxZN8S4zVT+TQXmquKYhde6Xq4b7h6dZ1aFOYyoc=",
