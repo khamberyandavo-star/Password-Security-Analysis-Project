@@ -23,7 +23,7 @@ namespace StrengthAnalysis
             string label = GetLabel(score);
 
             //PrintResult(score, label);
-            return $"Score: {score}/150" + " " + $"Strength: {label}";
+            return $"Score: {score}/100" + " " + $"Strength: {label}";
         }
 
         static int AttackPenalty(double time, int weight)
